@@ -44,4 +44,5 @@ jobs:
             Write-Error "::error::Required TcVersion not found in project."
             exit 1
           } else {
-            Write-Host "✅ Required TcVersion is pre
+            Write-Host "✅ Required TcVersion is present."
+          }

@@ -30,9 +30,9 @@ jobs:
       - name: Run version check using script from ActaNonVerba
         shell: pwsh
         run: |
-          $scriptPath = Resolve-Path "./acta/.github/workflows/findXmlTagWithAttribute.ps1"
+          $scriptPath = "$PWD/acta/.github/workflows/findXmlTagWithAttribute.ps1"
           Write-Host "Using script at $scriptPath"
-          
+
           $result = & $scriptPath `
             -File "$env:projectPath" `
             -Tag "TcSmProject" `

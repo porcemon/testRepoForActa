@@ -10,7 +10,7 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - name: Checkout current repo (TwinCAT project)
+      - name: Checkout TwinCAT project repo
         uses: actions/checkout@v4
 
       - name: Clone ActaNonVerba repo to get validation script
@@ -30,7 +30,10 @@ jobs:
       - name: Run version check using script from ActaNonVerba
         shell: pwsh
         run: |
-          $result = & ./acta/.github/workflows/findXmlTagWithAttribute.ps1 `
+          $scriptPath = Resolve-Path "./acta/.github/workflows/findXmlTagWithAttribute.ps1"
+          Write-Host "Using script at $scriptPath"
+          
+          $result = & $scriptPath `
             -File "$env:projectPath" `
             -Tag "TcSmProject" `
             -Attribute "TcVersion" `

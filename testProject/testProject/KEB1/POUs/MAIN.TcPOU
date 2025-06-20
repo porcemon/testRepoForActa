@@ -3,7 +3,7 @@
   <POU Name="MAIN" Id="{66d4f454-7bbd-49ec-95c5-88132eb8edd7}" SpecialFunc="None">
     <Declaration><![CDATA[PROGRAM MAIN
 VAR
-	sanityCheck : int;
+	sanityCheck : INT;
 END_VAR
 ]]></Declaration>
     <Implementation>

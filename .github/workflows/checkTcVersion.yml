@@ -1,0 +1,48 @@
+name: Check TwinCAT Version
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  validate-tc-version:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout TwinCAT project repo
+        uses: actions/checkout@v4
+
+      - name: Download findXmlTagWithAttribute.ps1 from ActaNonVerba
+        shell: pwsh
+        run: |
+          Invoke-WebRequest `
+            -Uri "https://raw.githubusercontent.com/porcemon/ActaNonVerba/main/.github/workflows/findXmlTagWithAttribute.ps1" `
+            -OutFile "findXmlTagWithAttribute.ps1"
+
+      - name: Find .tsproj file path
+        id: find_tsproj
+        shell: pwsh
+        run: |
+          $proj = Get-ChildItem -Recurse -Filter *.tsproj | Select-Object -First 1
+          if (-not $proj) {
+            Write-Error "No .tsproj file found."
+            exit 1
+          }
+          echo "projectPath=$($proj.FullName)" >> $env:GITHUB_ENV
+
+      - name: Run TwinCAT version check
+        shell: pwsh
+        run: |
+          $result = & ./findXmlTagWithAttribute.ps1 `
+            -File "$env:projectPath" `
+            -Tag "TcSmProject" `
+            -Attribute "TcVersion" `
+            -Value "3.1.4024.65"
+
+          if ($LASTEXITCODE -ne 0 -or -not $result) {
+            Write-Error "Required TcVersion not found in project."
+            exit 1
+          } else {
+            Write-Host "✅ Required TcVersion is present."
+          }

@@ -30,7 +30,7 @@ jobs:
       - name: Run version check using script from ActaNonVerba
         shell: pwsh
         run: |
-          $scriptPath = Resolve-Path "$PWD/actaRepo/.github/workflows/findXmlTagWithAttribute.ps1"
+          $scriptPath = ".\actaRepo\.github\workflows\findXmlTagWithAttribute.ps1"
           if (-not (Test-Path $scriptPath)) {
             Write-Error "::error::Script not found at $scriptPath"
             exit 1

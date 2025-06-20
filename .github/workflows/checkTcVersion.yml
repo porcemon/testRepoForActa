@@ -10,13 +10,13 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - name: Checkout TwinCAT project repo
+      - name: Checkout this repo (with .tsproj)
         uses: actions/checkout@v4
 
-      - name: Clone ActaNonVerba repo to get validation script
-        run: git clone https://github.com/porcemon/ActaNonVerba.git acta
+      - name: Clone ActaNonVerba repo into ./actaRepo
+        run: git clone https://github.com/porcemon/ActaNonVerba.git ./actaRepo
 
-      - name: Find .tsproj file
+      - name: Find .tsproj file in this repo
         id: find_tsproj
         shell: pwsh
         run: |
@@ -30,7 +30,7 @@ jobs:
       - name: Run version check using script from ActaNonVerba
         shell: pwsh
         run: |
-          $scriptPath = "./acta/.github/workflows/findXmlTagWithAttribute.ps1"
+          $scriptPath = Resolve-Path "$PWD/actaRepo/.github/workflows/findXmlTagWithAttribute.ps1"
           if (-not (Test-Path $scriptPath)) {
             Write-Error "::error::Script not found at $scriptPath"
             exit 1

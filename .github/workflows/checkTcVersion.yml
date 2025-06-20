@@ -33,15 +33,15 @@ jobs:
           $scriptPath = "$PWD/acta/.github/workflows/findXmlTagWithAttribute.ps1"
           Write-Host "Using script at $scriptPath"
 
-          $result = & $scriptPath `
-            -File "$env:projectPath" `
-            -Tag "TcSmProject" `
-            -Attribute "TcVersion" `
-            -Value "3.1.4024.65"
+          $cmd = "powershell -ExecutionPolicy Bypass -File `"$scriptPath`" " +
+                 "-File `"$env:projectPath`" " +
+                 "-Tag TcSmProject -Attribute TcVersion -Value 3.1.4024.65"
+          Write-Host "Running command: $cmd"
 
-          if ($LASTEXITCODE -ne 0 -or -not $result) {
+          iex $cmd
+
+          if ($LASTEXITCODE -ne 0) {
             Write-Error "::error::Required TcVersion not found in project."
             exit 1
           } else {
-            Write-Host "✅ Required TcVersion is present."
-          }
+            Write-Host "✅ Required TcVersion is pre

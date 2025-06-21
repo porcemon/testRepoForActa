@@ -1,12 +1,32 @@
-name: Download Script from Another Repo
+name: Download Script and Commit
 
 on:
   workflow_dispatch:
 
 jobs:
-  download-script:
+  commit-script:
     runs-on: windows-latest
 
     steps:
+      - name: Checkout current repo
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true  # Needed to push back to repo
+
       - name: Create scripts folder
         run: mkdir scripts
+
+      - name: Download script into scripts/
+        shell: pwsh
+        run: |
+          Invoke-WebRequest `
+            -Uri "https://raw.githubusercontent.com/porcemon/ActaNonVerba/main/scripts/findXmlTagWithAttribute.ps1" `
+            -OutFile "scripts/findXmlTagWithAttribute.ps1"
+
+      - name: Commit and push changes
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add scripts/findXmlTagWithAttribute.ps1
+          git commit -m "Add findXmlTagWithAttribute.ps1 from ActaNonVerba"
+          git push

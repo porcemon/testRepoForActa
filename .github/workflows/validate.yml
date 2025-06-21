@@ -1,0 +1,30 @@
+name: Validate TwinCAT Project
+
+on:
+  workflow_call:
+    inputs:
+      projectPath:
+        required: true
+        type: string
+
+jobs:
+  validate:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Download script
+        uses: actions/download-artifact@v4
+        with:
+          name: check-script
+
+      - name: Run script
+        shell: pwsh
+        run: |
+          & ./findXmlModuleWithAttribute.ps1 `
+            -File "${{ inputs.projectPath }}" `
+            -Tag "TcSmProject" `
+            -Attribute "TcVersion" `
+            -Value "3.1.4024.65"

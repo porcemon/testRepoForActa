@@ -1,32 +1,41 @@
-name: Download Script and Commit
+name: Check TwinCAT Version (Download Script)
 
 on:
+  push:
+  pull_request:
   workflow_dispatch:
 
 jobs:
-  commit-script:
+  check-version:
     runs-on: windows-latest
 
     steps:
       - name: Checkout current repo
         uses: actions/checkout@v4
-        with:
-          persist-credentials: true  # Needed to push back to repo
 
-      - name: Create scripts folder
-        run: mkdir scripts
-
-      - name: Download script into scripts/
+      - name: Download script from ActaNonVerba
         shell: pwsh
         run: |
           Invoke-WebRequest `
             -Uri "https://raw.githubusercontent.com/porcemon/ActaNonVerba/refs/heads/main/.github/workflows/findXmlModuleWithAttribute.ps1" `
-            -OutFile "scripts/findXmlTagWithAttribute.ps1"
+            -OutFile "findXmlTagWithAttribute.ps1"
 
-      - name: Commit and push changes
+      - name: Find .tsproj file
+        id: find_tsproj
+        shell: pwsh
         run: |
-          git config user.name "github-actions"
-          git config user.email "github-actions@github.com"
-          git add scripts/findXmlTagWithAttribute.ps1
-          git commit -m "Add findXmlTagWithAttribute.ps1 from ActaNonVerba"
-          git push
+          $proj = Get-ChildItem -Recurse -Filter *.tsproj | Select-Object -First 1
+          if (-not $proj) {
+            Write-Error "No .tsproj file found."
+            exit 1
+          }
+          echo "projectPath=$($proj.FullName)" >> $env:GITHUB_ENV
+
+      - name: Run downloaded script
+        shell: pwsh
+        run: |
+          & ./findXmlTagWithAttribute.ps1 `
+            -File "$env:projectPath" `
+            -Tag "TcSmProject" `
+            -Attribute "TcVersion" `
+            -Value "3.1.4024.65"

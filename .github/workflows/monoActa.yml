@@ -44,6 +44,13 @@ jobs:
     runs-on: windows-latest
     needs: prepare
 
+    strategy:
+      matrix:
+        check:
+          - { tag: "TcSmProject", attribute: "TcVersion",       value: "3.1.4024.65" }
+          - { tag: "TcSmProject", attribute: "TcVersionFixed",  value: "true" }
+          - { tag: "Project",     attribute: "CopyTmcToTarget", value: "true" }
+
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -52,6 +59,28 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: check-script
+
+      - name: Run ${{ matrix.check.tag }} / ${{ matrix.check.attribute }}
+        shell: pwsh
+        run: |
+          & ./findXmlModuleWithAttribute.ps1 `
+            -File "${{ needs.prepare.outputs.projectPath }}" `
+            -Tag "${{ matrix.check.tag }}" `
+            -Attribute "${{ matrix.check.attribute }}" `
+            -Value "${{ matrix.check.value }}"
+
+#  validate:
+#    runs-on: windows-latest
+#    needs: prepare
+
+#    steps:
+#      - name: Checkout repo
+#        uses: actions/checkout@v4
+
+#      - name: Download script artifact
+#        uses: actions/download-artifact@v4
+#        with:
+#          name: check-script
 
       - name: version as defined
         shell: pwsh

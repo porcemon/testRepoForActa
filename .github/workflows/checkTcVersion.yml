@@ -20,7 +20,7 @@ jobs:
         shell: pwsh
         run: |
           Invoke-WebRequest `
-            -Uri "https://raw.githubusercontent.com/porcemon/ActaNonVerba/main/scripts/findXmlTagWithAttribute.ps1" `
+            -Uri "https://github.com/porcemon/ActaNonVerba/blob/main/.github/workflows/findXmlModuleWithAttribute.ps1" `
             -OutFile "scripts/findXmlTagWithAttribute.ps1"
 
       - name: Commit and push changes

@@ -62,6 +62,15 @@ jobs:
             -Attribute "TcVersion" `
             -Value "3.1.4024.65"
 
+      - name: version as defined
+        shell: pwsh
+        run: |
+          & ./findXmlModuleWithAttribute.ps1 `
+            -File "${{ needs.prepare.outputs.projectPath }}" `
+            -Tag "TcSmProject" `
+            -Attribute "TcVersionFixed" `
+            -Value "true"
+
       - name: tmc file active 
         shell: pwsh
         run: |

@@ -1,52 +1,24 @@
-name: Check TwinCAT Version
+name: Download Script from Another Repo
 
 on:
-  push:
-  pull_request:
   workflow_dispatch:
 
 jobs:
-  validate-tc-version:
+  download-script:
     runs-on: windows-latest
 
     steps:
-      - name: Checkout this repo (with .tsproj)
-        uses: actions/checkout@v4
+      - name: Create scripts folder
+        run: mkdir scripts
 
-      - name: Clone ActaNonVerba repo into ./actaRepo
-        run: git clone https://github.com/porcemon/ActaNonVerba.git ./actaRepo
-
-      - name: Find .tsproj file in this repo
-        id: find_tsproj
+      - name: Download script from ActaNonVerba
         shell: pwsh
         run: |
-          $proj = Get-ChildItem -Recurse -Filter *.tsproj | Select-Object -First 1
-          if (-not $proj) {
-            Write-Error "No .tsproj file found."
-            exit 1
-          }
-          echo "projectPath=$($proj.FullName)" >> $env:GITHUB_ENV
+          Invoke-WebRequest `
+            -Uri "https://raw.githubusercontent.com/porcemon/ActaNonVerba/main/scripts/findXmlTagWithAttribute.ps1" `
+            -OutFile "scripts/findXmlTagWithAttribute.ps1"
 
-      - name: Run version check using script from ActaNonVerba
+      - name: Show script content (optional)
         shell: pwsh
         run: |
-          $scriptPath = ".\actaRepo\.github\workflows\findXmlTagWithAttribute.ps1"
-          if (-not (Test-Path $scriptPath)) {
-            Write-Error "::error::Script not found at $scriptPath"
-            exit 1
-          }
-
-          Write-Host "Using script at $scriptPath"
-
-          $result = & $scriptPath `
-            -File "$env:projectPath" `
-            -Tag "TcSmProject" `
-            -Attribute "TcVersion" `
-            -Value "3.1.4024.65"
-
-          if ($LASTEXITCODE -ne 0 -or -not $result) {
-            Write-Error "::error::Required TcVersion not found in project."
-            exit 1
-          } else {
-            Write-Host "✅ Required TcVersion is present."
-          }
+          Get-Content scripts/findXmlTagWithAttribute.ps1

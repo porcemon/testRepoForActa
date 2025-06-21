@@ -10,15 +10,3 @@ jobs:
     steps:
       - name: Create scripts folder
         run: mkdir scripts
-
-      - name: Download script from ActaNonVerba
-        shell: pwsh
-        run: |
-          Invoke-WebRequest `
-            -Uri "https://raw.githubusercontent.com/porcemon/ActaNonVerba/main/scripts/findXmlTagWithAttribute.ps1" `
-            -OutFile "scripts/findXmlTagWithAttribute.ps1"
-
-      - name: Show script content (optional)
-        shell: pwsh
-        run: |
-          Get-Content scripts/findXmlTagWithAttribute.ps1

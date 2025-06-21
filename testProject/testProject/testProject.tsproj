@@ -9,7 +9,7 @@
 			</Tasks>
 		</System>
 		<Plc>
-			<Project GUID="{2D66DD74-7A54-4A99-8E20-323F062CB53D}" Name="KEB1" PrjFilePath="KEB1\KEB1.plcproj" TmcFilePath="KEB1\KEB1.tmc" ReloadTmc="true" AmsPort="851" FileArchiveSettings="#x000e" SymbolicMapping="true">
+			<Project GUID="{2D66DD74-7A54-4A99-8E20-323F062CB53D}" Name="KEB1" PrjFilePath="KEB1\KEB1.plcproj" TmcFilePath="KEB1\KEB1.tmc" ReloadTmc="true" AmsPort="851" FileArchiveSettings="#x000e" CopyTmcToTarget="true" CopyTpyToTarget="false" SymbolicMapping="true">
 				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2">
 					<Name>KEB1 Instance</Name>
 					<CLSID ClassFactory="TcPlc30">{08500001-0000-0000-F000-000000000064}</CLSID>

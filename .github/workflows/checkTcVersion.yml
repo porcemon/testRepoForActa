@@ -1,8 +1,6 @@
-name: Check TwinCAT Version (Split Jobs)
+name: Check TwinCAT Version (Prepare)
 
 on:
-  push:
-  pull_request:
   workflow_dispatch:
 
 jobs:
@@ -16,11 +14,10 @@ jobs:
       - name: Checkout current repo
         uses: actions/checkout@v4
 
-      - name: Download script from ActaNonVerba
-        shell: pwsh
+      - name: Download script
         run: |
           Invoke-WebRequest `
-            -Uri "https://raw.githubusercontent.com/porcemon/ActaNonVerba/refs/heads/main/.github/workflows/findXmlModuleWithAttribute.ps1" `
+            -Uri "https://raw.githubusercontent.com/porcemon/ActaNonVerba/main/scripts/findXmlModuleWithAttribute.ps1" `
             -OutFile "findXmlModuleWithAttribute.ps1"
 
       - name: Upload script
@@ -34,30 +31,10 @@ jobs:
         shell: pwsh
         run: |
           $proj = Get-ChildItem -Recurse -Filter *.tsproj | Select-Object -First 1
-          if (-not $proj) {
-            Write-Error "No .tsproj file found."
-            exit 1
-          }
           echo "::set-output name=projectPath::$($proj.FullName)"
 
-  validate:
-    runs-on: windows-latest
+  call-validate:
+    uses: ./.github/workflows/validate.yml
     needs: prepare
-
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
-
-      - name: Download script artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: check-script
-
-      - name: Run downloaded script
-        shell: pwsh
-        run: |
-          & ./findXmlModuleWithAttribute.ps1 `
-            -File "${{ needs.prepare.outputs.projectPath }}" `
-            -Tag "TcSmProject" `
-            -Attribute "TcVersion" `
-            -Value "3.1.4024.65"
+    with:
+      projectPath: ${{ needs.prepare.outputs.projectPath }}
